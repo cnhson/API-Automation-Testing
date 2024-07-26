@@ -1,0 +1,154 @@
+package api.test.main.examples;
+
+import java.time.Duration;
+import java.time.Instant;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Factory;
+import org.testng.annotations.Test;
+
+import api.test.endpoints.HTTPRequest;
+import api.test.controllers.IndepedentFetchController;
+import api.utilities.AuthenUtil;
+import api.utilities.ExcelFetchUtil;
+import api.utilities.LoggerUtil;
+import api.utilities.IndependentValUtil;
+import io.restassured.response.Response;
+
+public class IndependentTestExample {
+
+    @Test(priority = 1)
+    public void PositiveTest() {
+        ExcelFetchUtil euAPI = new ExcelFetchUtil("VICK_API_INDEPENDENT");
+        ExcelFetchUtil euAccount = new ExcelFetchUtil("VICK_TEST_ACCOUNT");
+        AuthenUtil au = new AuthenUtil();
+        LoggerUtil.info("%s", "POSITIVE TESTING STARTED");
+        Instant start = Instant.now();
+
+        String[] accountInfo = euAccount.getRowCellsData(1, "USERNAME", "PASSWORD;");
+        String username = accountInfo[0];
+        String password = accountInfo[1];
+
+        IndepedentFetchController fcu = new IndepedentFetchController();
+        Boolean isRunning = true;
+        // fcu.loopFetchingData(isRunning, index -> {
+        // System.out.println("index: " + index + ", isRunning: " + isRunning);
+        // if (euAPI.isFetchingEnd(index)) {
+        // fcu.setIsRunning(false);
+        // } else {
+        // String reqUrl = euAPI.getRowCellsData(index, "PATH");
+        // String payload = euAPI.getRowCellsData(index, "QUERY_PARAM");
+        // String expectedRes = euAPI.getRowCellsData(index, "SUCCESS_RESPONSE");
+        // String authenRequire = euAPI.getRowCellsData(index, "LOGIN_REQUIRED");
+        // Response res = null;
+        // Integer attempts = 0;
+
+        // HTTPRequest request = new HTTPRequest(reqUrl, payload);
+        // if (authenRequire.equals("NO")) {
+        // res = request.post();
+        // } else {
+
+        // while (attempts < 2) {
+        // res = request.postWithSession();
+
+        // if (au.isLoggedIn(res)) {
+        // attempts = 2;
+        // } else {
+        // au.authorize("SYSTEM", username, password);
+        // attempts++;
+        // }
+        // }
+        // }
+        // SequenceUtil se = new SequenceUtil(reqUrl, res, expectedRes);
+        // se.expectPositiveResult();
+        // }
+        // });
+        Integer index = 1;
+        while (isRunning) {
+            String ID = euAPI.getRowCellsData(index, "ID")[0];
+            if (euAPI.isFetchingEnd(index)) {
+                isRunning = false;
+                break;
+            } else {
+                String[] result = euAPI.getRowCellsData(index, "PATH", "QUERY_PARAM",
+                        "SUCCESS_RESPONSE", "LOGIN_REQUIRED");
+                String reqUrl = result[0];
+                String payload = result[1];
+                String expectedRes = result[2];
+                String authenRequire = result[3];
+                Response res = null;
+                Integer attempts = 0;
+
+                HTTPRequest request = new HTTPRequest(reqUrl, payload);
+                if (authenRequire.equals("NO")) {
+                    res = request.post();
+                } else {
+
+                    while (attempts < 2) {
+                        res = request.postWithSession();
+
+                        if (au.isLoggedIn(res)) {
+                            attempts = 2;
+                        } else {
+                            au.authorize("SYSTEM", username, password);
+                            attempts++;
+                        }
+                    }
+                }
+                IndependentValUtil se = new IndependentValUtil(reqUrl, res, expectedRes);
+                se.expectPositiveResult();
+                index++;
+            }
+
+        }
+
+        Instant finish = Instant.now();
+        long timeElapsed = Duration.between(start, finish).toMillis();
+        LoggerUtil.info("POSITIVE TESTING ENDED, Time elapsed: %d ms", timeElapsed);
+    }
+
+    // @Test(priority = 2)
+    // public void NegativeTest() {
+    // ExcelUtil euAPI = new ExcelUtil("VICK_TEST.xlsx");
+    // ExcelUtil euAccount = new ExcelUtil("VICK_TEST.xlsx");
+    // AuthenUtil au = new AuthenUtil();
+
+    // LoggerUtil.info("%s", "NEGATIVE TESTING STARTED");
+    // Instant start = Instant.now();
+    // euAPI.setConfig();
+    // euAccount.setConfig();
+
+    // String username = euAccount.getRowCellsData(1, "USERNAME");
+    // String password = euAccount.getRowCellsData(1, "PASSWORD");
+
+    // if (!au.isLoggedIn()) {
+    // au.authorize("SYSTEM", username, password);
+    // }
+
+    // for (Integer i = 2; i < 6; i++) {
+    // String reqUrl = euAPI.getRowCellsData(index, "PATH");
+    // if (!reqUrl.isEmpty()) {
+    // String payload = euAPI.getRowCellsData(index, "QUERY_PARAM");
+    // String expectedRes = euAPI.getRowCellsData(index, "SUCCESS_RESPONSE");
+    // String authenRequire = euAPI.getRowCellsData(index, "LOGIN_REQUIRED");
+    // Response res;
+    // if (authenRequire.equals("NO")) {
+    // res = HTTPRequest.post(reqUrl, payload);
+    // } else
+    // res = HTTPRequest.postWithSession(reqUrl, payload);
+
+    // Validation se = new Validation(res, reqUrl, expectedRes);
+    // se.expectPositiveResult();
+
+    // }
+    // }
+
+    // euAPI.close();
+    // Instant finish = Instant.now();
+    // long timeElapsed = Duration.between(start, finish).toMillis();
+    // LoggerUtil.info("NEGATIVE TESTING ENDED, Time elapsed: %d ms", timeElapsed);
+
+    // }
+}

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Suite">
+    <listeners>
+        <listener class-name="api.test.lib.CustomReporter" />
+    </listeners>
+    <test name="Tests">
+        <classes>
+            <!-- <class name="api.test.main.IndependentTestFactory" /> -->
+            <!-- <class name="api.test.main.NoValidateTestFactory" /> -->
+            <class name="api.test.main.ChainingTestFactory" />
+        </classes>
+    </test>
+</suite>

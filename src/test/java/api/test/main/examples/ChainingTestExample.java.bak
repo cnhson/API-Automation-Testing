@@ -1,0 +1,108 @@
+package api.test.main.examples;
+
+import java.time.Duration;
+import java.time.Instant;
+import java.util.HashSet;
+import java.util.Arrays;
+
+import org.testng.annotations.Test;
+
+import com.google.gson.JsonObject;
+
+import api.test.endpoints.HTTPRequest;
+import api.utilities.AuthenUtil;
+import api.utilities.ChainingValUtil;
+import api.utilities.ExcelFetchUtil;
+import api.utilities.LoggerUtil;
+import io.restassured.response.Response;
+
+public class ChainingTestExample {
+
+    @Test(priority = 1)
+    public void positiveTest() {
+        ExcelFetchUtil euAPI = new ExcelFetchUtil("API_CHAINING");
+        ExcelFetchUtil euAccount = new ExcelFetchUtil("TEST_ACCOUNT");
+        AuthenUtil au = new AuthenUtil();
+
+        LoggerUtil.info("%s", "CHAINING TESTING STARTED");
+        Instant start = Instant.now();
+
+        Integer maxRowCount = 20;
+        String[] accountInfo = euAccount.getRowCellsData(1, "USERNAME", "PASSWORD;");
+        String username = accountInfo[0];
+        String password = accountInfo[1];
+
+        HashSet<String> variableList = new HashSet<String>();
+        HashSet<String> verifyVarList = new HashSet<String>();
+        JsonObject jsonVariableAndValue = new JsonObject();
+
+        Boolean isFinalStep = false;
+
+        for (Integer i = 1; i < maxRowCount; i++) {
+            String reqUrl = euAPI.getRowCellsData(i, "PATH")[0];
+            if (!reqUrl.isEmpty()) {
+                String[] result = euAPI.getRowCellsData(i, "QUERY_PARAM", "LOGIN_REQUIRED", "VARIABLE",
+                        "VERIFY_VARIABLE");
+                String payload = result[0];
+                String authenRequire = result[1];
+                String variable = result[2];
+                String verifyVariable = result[3];
+
+                if (!variable.isBlank() && !variable.isEmpty()) {
+                    variableList = convertExcelVariableToList(variable);
+                    isFinalStep = false;
+                } else {
+                    verifyVarList = convertExcelVariableToList(verifyVariable);
+                    isFinalStep = true;
+                }
+                ChainingValUtil cu = new ChainingValUtil(payload, reqUrl);
+
+                if (cu.checkIfVariableSlotInParam()) {
+                    cu.insertVariableSlotValue(jsonVariableAndValue);
+                    payload = cu.getInsertedPayloadAsString();
+                }
+                // System.out.print("After ");
+                // cu.showPayload();
+
+                Response res = null;
+                Integer attempts = 0;
+
+                HTTPRequest request = new HTTPRequest(reqUrl, payload);
+                if (authenRequire.equals("NO")) {
+                    res = request.post();
+                } else {
+                    while (attempts < 2) {
+                        res = request.postWithSession();
+                        if (au.isLoggedIn(res)) {
+                            attempts = 2;
+                        } else {
+                            au.authorize("SYSTEM", username, password);
+                            attempts++;
+                        }
+                    }
+                }
+                cu.setResponse(res);
+                cu.expectSuccessResult(isFinalStep, verifyVarList, variableList, jsonVariableAndValue);
+
+                // Clear variableList for next step
+                variableList.clear();
+            }
+        }
+
+        Instant finish = Instant.now();
+        long timeElapsed = Duration.between(start, finish).toMillis();
+        LoggerUtil.info("CHAINING TESTING ENDED, Time elapsed: %d ms", timeElapsed);
+
+    }
+
+    public HashSet<String> convertExcelVariableToList(String excelVariable) {
+        HashSet<String> tempList = new HashSet<String>();
+        if (excelVariable.contains(",")) {
+            String[] varArray = excelVariable.split(",\\s*");
+            tempList.addAll(Arrays.asList(varArray));
+        } else {
+            tempList.add(excelVariable);
+        }
+        return tempList;
+    }
+}
