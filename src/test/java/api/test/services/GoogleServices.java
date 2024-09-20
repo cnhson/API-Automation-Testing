@@ -32,27 +32,26 @@ public class GoogleServices {
             GoogleCredentials savedCredentials = getCredentials();
             this.HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
             this.requestInitializer = new HttpCredentialsAdapter(savedCredentials);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
 
     private GoogleCredentials getCredentials() throws IOException {
         java.io.File file = new File(PRIVATE_RESOURCE_PATH + CREDENTIALS_FILE_PATH);
-        FileInputStream serviceAccountStream = new FileInputStream(file.getAbsolutePath());
+        FileInputStream serviceAccountStream = new FileInputStream(file.getPath());
         return ServiceAccountCredentials.fromStream(serviceAccountStream)
                 .createScoped(Collections.singletonList(DriveScopes.DRIVE));
     }
 
     public Drive buildDriveService() {
         return new Drive.Builder(this.HTTP_TRANSPORT, this.JSON_FACTORY, this.requestInitializer)
-                .setApplicationName(this.APPLICATION_NAME)
-                .build();
+                .setApplicationName(this.APPLICATION_NAME).build();
     }
 
     public Sheets buildSheetService() {
         return new Sheets.Builder(this.HTTP_TRANSPORT, this.JSON_FACTORY, this.requestInitializer)
-                .setApplicationName(this.APPLICATION_NAME)
-                .build();
+                .setApplicationName(this.APPLICATION_NAME).build();
     }
 }

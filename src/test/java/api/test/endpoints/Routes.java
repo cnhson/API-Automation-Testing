@@ -1,6 +1,6 @@
 package api.test.endpoints;
 
-import api.utilities.PropertyUtil;
+import api.test.utilities.PropertyUtil;
 
 public class Routes {
 
@@ -16,7 +16,8 @@ public class Routes {
             slDomain = pu.getPropAsString("SLDOMAIN");
             tlDomain = pu.getPropAsString("TLDOMAIN");
             fullDomain = "https://" + subDomain + slDomain + tlDomain;
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
     }

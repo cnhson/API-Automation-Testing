@@ -1,14 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
-<suite name="Suite">
+<suite name="FirstSuite">
     <listeners>
-        <listener class-name="api.test.lib.CustomReporter" />
+        <listener class-name="api.test.lib.custom.testNG.CustomReporter" />
+        <!-- <listener class-name="api.test.lib.CustomMethodInterceptor" /> -->
     </listeners>
-    <test name="Tests">
+    <!-- <test name="ChainingTests">
         <classes>
-            <!-- <class name="api.test.main.IndependentTestFactory" /> -->
-            <!-- <class name="api.test.main.NoValidateTestFactory" /> -->
-            <class name="api.test.main.ChainingTestFactory" />
+            <class name="api.test.main.factories.ChainingTestFactory" />
+        </classes>
+    </test> -->
+    <!-- <test name="IndependentTests">
+        <classes>
+            <class name="api.test.main.factories.IndependentTestFactory" />
+        </classes>
+    </test> -->
+    <!-- <test name="AllInOne">
+        <classes>
+            <class name="api.test.main.factories.FakeIndepdentTestFactory" />
+        </classes>
+    </test> -->
+    <!-- <test name="AllInTwo">
+        <classes>
+            <class name="api.test.main.factories.FakeIndepdentTestFactory2" />
+        </classes>
+    </test> -->
+    <test name="AllInThree">
+        <classes>
+            <!-- <class name="api.test.main.factories.FakeIndepdentTestFactory" /> -->
+            <!-- <class name="api.test.main.factories.FakeIndepdentTestFactory3" /> -->
+            <class name="api.test.main.factories.IndependentTestFactory" />
+            <class name="api.test.main.factories.ChainingTestFactory" />
         </classes>
     </test>
 </suite>

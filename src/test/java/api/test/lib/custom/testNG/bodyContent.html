@@ -1,0 +1,31 @@
+<script>
+  function apiListContentAppend() {
+    var toggler = document.getElementsByClassName("caret");
+    var i;
+    for (i = 0; i < toggler.length; i++) {
+      toggler[i].addEventListener("click", function () {
+        this.parentElement.querySelector(".nested-api-group").classList.toggle("active");
+
+        this.classList.toggle("caret-down");
+      });
+    }
+  }
+
+  function addModalCloseEvent() {
+    document.querySelectorAll(".stack-trace-modal").forEach((elem) => {
+      let closeModalButton = elem.querySelector("span.close");
+      closeModalButton.onclick = function () {
+        elem.classList.remove("active");
+      };
+
+      elem.onclick = function (event) {
+        if (event.target == elem) {
+          elem.classList.remove("active");
+        }
+      };
+    });
+  }
+
+  apiListContentAppend();
+  addModalCloseEvent();
+</script>

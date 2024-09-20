@@ -1,0 +1,344 @@
+<html>
+<head>
+<title>TestNG:  AllInThree</title>
+<link
+  href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700;800&display=swap"
+  rel="stylesheet" />
+<style type="text/css">
+  * {
+    font-family: "Quicksand", sans-serif;
+  }
+
+  body {
+    font-weight: 500;
+    background-color: #e9e9e9;
+  }
+
+  pre {
+    white-space: pre-wrap;
+    padding: 0 10px 15px 10px;
+    font-weight: 500;
+  }
+
+  button {
+    transition-duration: 0.4s;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  button:hover {
+    filter: brightness(120%);
+    transition: all 0.6s;
+  }
+
+  .log {
+    display: none;
+  }
+
+  .stack-trace-modal {
+    display: none;
+    position: fixed;
+    z-index: 10;
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    color: white;
+    background-color: rgba(6, 6, 6, 0.4);
+  }
+
+  .stack-trace-header {
+    width: 100%;
+    height: 2.25rem;
+    background: rgb(0, 128, 96);
+  }
+  .stack-trace-content {
+    width: 80rem;
+    height: fit-content;
+    background-color: rgba(17, 17, 17);
+    font-size: 15px;
+  }
+
+  .close {
+    color: #aaa;
+    float: right;
+    font-size: 27px;
+    font-weight: bold;
+    padding: 0px 10px;
+  }
+
+  .close:hover,
+  .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  ul,
+  #myUL {
+    list-style-type: none;
+  }
+
+  #myUL {
+    margin: 0;
+    padding: 0;
+  }
+
+  .caret {
+    cursor: pointer;
+    -webkit-user-select: none; /* Safari 3.1+ */
+    -moz-user-select: none; /* Firefox 2+ */
+    -ms-user-select: none; /* IE 10+ */
+    user-select: none;
+  }
+
+  .caret::before {
+    content: "\25B6";
+    color: black;
+    display: inline-block;
+    margin-right: 6px;
+  }
+
+  .caret-down::before {
+    -ms-transform: rotate(90deg); /* IE 9 */
+    -webkit-transform: rotate(90deg); /* Safari */
+    transform: rotate(90deg);
+  }
+
+  .nested-api-group {
+    margin: 3px 0 0 5px;
+    padding: 0;
+    display: none;
+  }
+
+  .nested-api-table {
+    font-size: 12px;
+    font-weight: 600;
+    width: 95%;
+    border-collapse: collapse;
+  }
+
+  .row-line {
+    transform: scaleY(-1);
+    width: 10px;
+  }
+
+  .row-line::before {
+    content: "";
+    border-left: 1px solid black;
+    display: inline-block;
+    height: 18px;
+    position: absolute;
+  }
+
+  .row-line::after {
+    content: "";
+    display: block;
+    border-bottom: 1px solid black;
+    position: absolute;
+    width: 10px;
+  }
+
+  .active {
+    display: block;
+  }
+
+  .stack-trace-modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .border-button,
+  .failed-filter-button,
+  .no-filter-button {
+    margin-left: 10px;
+    border-radius: 5px;
+    border: 0px solid;
+    padding: 5px 15px;
+  }
+
+  .table-header {
+    background: rgb(0, 128, 96);
+    color: white;
+    height: 2rem;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+  }
+
+  .summary-table {
+    border-collapse: collapse;
+
+    tr:nth-child(odd) td:first-child {
+      background-color: rgb(0, 128, 96, 0.9);
+    }
+
+    tr:nth-child(odd) td:last-child {
+      background-color: white;
+    }
+
+    tr:nth-child(even) td:first-child {
+      background-color: #008060;
+    }
+
+    tr:nth-child(even) td:last-child {
+      background-color: rgb(255, 255, 255, 0.8);
+    }
+
+    tr:first-of-type td:first-of-type {
+      border-top-left-radius: 5px;
+    }
+    tr:first-of-type td:last-of-type {
+      border-top-right-radius: 5px;
+    }
+    tr:last-of-type td:first-of-type {
+      border-bottom-left-radius: 5px;
+    }
+    tr:last-of-type td:last-of-type {
+      border-bottom-right-radius: 5px;
+    }
+
+    .row-head {
+      padding: 5 10px;
+      color: white;
+      padding-right: 10px;
+    }
+
+    .row-content {
+      padding: 5 10px;
+      color: #008060;
+      padding-left: 10px;
+      font-weight: 700;
+    }
+  }
+</style>
+<script type="text/javascript">
+  function tableFilter(tableClassName, value) {
+    var table = document.querySelector("table." + tableClassName);
+    if (table) {
+      var rows = table.getElementsByTagName("tr");
+      if (value == "default")
+        for (var i = 0; i < rows.length; i++) {
+          rows[i].style.display = "";
+        }
+      else if (value == "fail") {
+        for (var i = 0; i < rows.length; i++) {
+          if (rows[i].classList.contains("SUCCESS")) {
+            rows[i].style.display = "none";
+          } else if (rows[i].classList.contains("FAILURE")) {
+            rows[i].style.display = "";
+          }
+        }
+      }
+    }
+  }
+
+  function toggleBox(szDivId, elem) {
+    var modal = document.getElementById(szDivId);
+    if (modal) {
+      modal.classList.add("active");
+    } else {
+      console.log("Null element");
+    }
+  }
+</script>
+`
+</head>
+<body>
+<h2 align='center' style="font-family: Bahnschrift;
+padding: 0.425rem 0px;
+background: rgb(0, 128, 96);
+color: white;">Report</h2><table border='0' align="center" class="summary-table">
+<tr><td class="row-head">Mode</td><td class="row-content">ONLINE</td></tr>
+<tr><td class="row-head">Total</td><td class="row-content">6</td></tr>
+<tr><td class="row-head">Passed/Failed/Skipped </td><td class="row-content">5/1/0</td></tr>
+<tr><td class="row-head">Started on</td><td class="row-content">2024-09-20 21.00.23</td></tr>
+<tr><td class="row-head">Ended on</td><td class="row-content">2024-09-20 21.00.30</td></tr>
+<tr><td class="row-head">Total time</td><td class="row-content">7 seconds (7528 ms)</td>
+</table><p/>
+<table width='100%' border='0' style="font-size: 12px; margin-bottom: 50px;
+font-weight: 600; border-collapse: collapse;" class='IndependentTestWorker-results'>
+<tbody style="background: white;"<tr><td colspan='7' align='center' class="table-header"> <div style="display: flex; align-items: center;"> <div class="filter-section" style="margin:10px 0 10px 25px;"><b>Filter</b><button class="failed-filter-button" onClick="tableFilter('IndependentTestWorker-results','fail')"><b>FAILED</b></button><button class="no-filter-button"     onClick="tableFilter('IndependentTestWorker-results','default')"><b>DEFAULT</b></button></div><div style="z-index: 2; position: absolute; width: fit-content; margin: 0 auto; font-size: 15px; left: 0; right: 0; "><b>IndependentTestWorker</b></div></div></td></tr>
+<tr style="border-bottom: 1px solid #ababab;"><td width="4%"></td><td width="8%" style="padding: 10px 0 5px 0px;"><b>ID</b></td>
+<td width="30%" style="padding: 10px 0 5px 0px;"><b>Description</b></td>
+<td width="10%" style="padding: 10px 0 5px 0px;"><b>Method</b></td>
+<td width="auto" style="padding: 10px 0 5px 0px;"><b>API Path | Response Time</b></td>
+<td width="10%" style="padding: 10px 0 5px 0px;"><b>Exception</b></td>
+<td width="5%" style="padding: 10px 0 5px 0px;"><b>Time</b></td>
+</tr>
+<tr class="SUCCESS" style="border-bottom: 1px solid #ababab; background: #5eff5e61">
+<td style="padding:10px 0 10px 20px;">🟢</td><td style="padding:10px 0 10px 0px;">Test_1</td><td style="padding: 10px 10px 10px 0px;
+    word-break: auto-phrase;"></td><td>positiveTest</td><td colspan='1' style="padding:10px 0 10px 0px;"><ul id="myUL"><li> <table class="nested-api-table" colspan='3'><tr><td width='1%'/><td width='auto'/><td width='16%'/></tr><tr><td style="position: relative"> </td><td> /api/SubscriptionPlanApi/findDataList</td><td style="text-align: right;"> 141 ms</td></tr></table></td></td>
+<td style="overflow-y: auto; max-width: 40rem; max-height: 10rem;"></td>
+<td style="padding:10px 0 10px 0px;">143 ms</td><tr class="FAILURE" style="border-bottom: 1px solid #ababab; background: #ff383861">
+<td style="padding:10px 0 10px 20px;">🔴</td><td style="padding:10px 0 10px 0px;">Test_2</td><td style="padding: 10px 10px 10px 0px;
+    word-break: auto-phrase;"></td><td>positiveTest</td><td colspan='1' style="padding:10px 0 10px 0px;"><ul id="myUL"><li> <table class="nested-api-table" colspan='3'><tr><td width='1%'/><td width='auto'/><td width='16%'/></tr><tr><td style="position: relative"> </td><td> /api/SubscriptionPlanApi/findDataList</td><td style="text-align: right;"> 268 ms</td></tr></table></td></td>
+<td style="overflow-y: auto; max-width: 40rem; max-height: 10rem;"><button class="border-button" style="text-decoration: none;
+font-weight: 700;" onClick="toggleBox('stack-trace2078887126')">Logs 👁‍🗨</button><div class='stack-trace-modal' id='stack-trace2078887126'><div class="stack-trace-content"><div class="stack-trace-header"><span onClick="closeModalButton('stack-trace2078887126')" class="close">&times;</span></div><pre>java.lang.Throwable: The following asserts failed:
+	      Expected: 36 keys
+      Actual: 37 keys
+      Missing: [content.data[0].id]
+</pre></div></div></td>
+<td style="padding:10px 0 10px 0px;">281 ms</td><tr class="SUCCESS" style="border-bottom: 1px solid #ababab; background: #5eff5e61">
+<td style="padding:10px 0 10px 20px;">🟢</td><td style="padding:10px 0 10px 0px;">Test_3</td><td style="padding: 10px 10px 10px 0px;
+    word-break: auto-phrase;"></td><td>positiveTest</td><td colspan='1' style="padding:10px 0 10px 0px;"><ul id="myUL"><li> <table class="nested-api-table" colspan='3'><tr><td width='1%'/><td width='auto'/><td width='16%'/></tr><tr><td style="position: relative"> </td><td> /authenapi/userapi/findDataListExport</td><td style="text-align: right;"> 146 ms</td></tr></table></td></td>
+<td style="overflow-y: auto; max-width: 40rem; max-height: 10rem;"></td>
+<td style="padding:10px 0 10px 0px;">753 ms</td><tr class="SUCCESS" style="border-bottom: 1px solid #ababab; background: #5eff5e61">
+<td style="padding:10px 0 10px 20px;">🟢</td><td style="padding:10px 0 10px 0px;">Test_4</td><td style="padding: 10px 10px 10px 0px;
+    word-break: auto-phrase;"></td><td>positiveTest</td><td colspan='1' style="padding:10px 0 10px 0px;"><ul id="myUL"><li> <table class="nested-api-table" colspan='3'><tr><td width='1%'/><td width='auto'/><td width='16%'/></tr><tr><td style="position: relative"> </td><td> /authenapi/SystemSubscriptionPlanApi/findDataListExport</td><td style="text-align: right;"> 159 ms</td></tr></table></td></td>
+<td style="overflow-y: auto; max-width: 40rem; max-height: 10rem;"></td>
+<td style="padding:10px 0 10px 0px;">307 ms</td></tbody>
+</table>
+<table width='100%' border='0' style="font-size: 12px; margin-bottom: 50px;
+font-weight: 600; border-collapse: collapse;" class='ChainingTestWorker-results'>
+<tbody style="background: white;"<tr><td colspan='7' align='center' class="table-header"> <div style="display: flex; align-items: center;"> <div class="filter-section" style="margin:10px 0 10px 25px;"><b>Filter</b><button class="failed-filter-button" onClick="tableFilter('ChainingTestWorker-results','fail')"><b>FAILED</b></button><button class="no-filter-button"     onClick="tableFilter('ChainingTestWorker-results','default')"><b>DEFAULT</b></button></div><div style="z-index: 2; position: absolute; width: fit-content; margin: 0 auto; font-size: 15px; left: 0; right: 0; "><b>ChainingTestWorker</b></div></div></td></tr>
+<tr style="border-bottom: 1px solid #ababab;"><td width="4%"></td><td width="8%" style="padding: 10px 0 5px 0px;"><b>ID</b></td>
+<td width="30%" style="padding: 10px 0 5px 0px;"><b>Description</b></td>
+<td width="10%" style="padding: 10px 0 5px 0px;"><b>Method</b></td>
+<td width="auto" style="padding: 10px 0 5px 0px;"><b>API Path | Response Time</b></td>
+<td width="10%" style="padding: 10px 0 5px 0px;"><b>Exception</b></td>
+<td width="5%" style="padding: 10px 0 5px 0px;"><b>Time</b></td>
+</tr>
+<tr class="SUCCESS" style="border-bottom: 1px solid #ababab; background: #5eff5e61">
+<td style="padding:10px 0 10px 20px;">🟢</td><td style="padding:10px 0 10px 0px;">Group_1</td><td style="padding: 10px 10px 10px 0px;
+    word-break: auto-phrase;">Find, change password of an account with username "hoangtest"</td><td>positiveTest</td><td colspan='1' style="padding:10px 0 10px 0px;"><ul id="myUL"><li><a class="caret"> View </a><ul class="nested-api-group"> <table class="nested-api-table" colspan='3'><tr><td width='1%'/><td width='auto'/><td width='16%'/></tr><tr><td style="position: relative"> <div class="row-line"/></td><td>🟩 /authenapi/userapi/findDataListExport</td><td style="text-align: right;"> 152 ms</td></tr><tr><td style="position: relative"> <div class="row-line"/></td><td>🟩 /authenapi/userapi/merge</td><td style="text-align: right;"> 165 ms</td></tr><tr><td style="position: relative"> <div class="row-line"/></td><td>🟩 /authenapi/userapi/findDataListExport</td><td style="text-align: right;"> 182 ms</td></tr></table></ul></li></ul></td></td>
+<td style="overflow-y: auto; max-width: 40rem; max-height: 10rem;"></td>
+<td style="padding:10px 0 10px 0px;">935 ms</td><tr class="SUCCESS" style="border-bottom: 1px solid #ababab; background: #5eff5e61">
+<td style="padding:10px 0 10px 20px;">🟢</td><td style="padding:10px 0 10px 0px;">Group_2</td><td style="padding: 10px 10px 10px 0px;
+    word-break: auto-phrase;">Find, change content of an post named "AutoTest_27_8_2024"</td><td>positiveTest</td><td colspan='1' style="padding:10px 0 10px 0px;"><ul id="myUL"><li><a class="caret"> View </a><ul class="nested-api-group"> <table class="nested-api-table" colspan='3'><tr><td width='1%'/><td width='auto'/><td width='16%'/></tr><tr><td style="position: relative"> <div class="row-line"/></td><td>🟩 /authenapi/PostManagementApi/findDataList</td><td style="text-align: right;"> 1386 ms</td></tr><tr><td style="position: relative"> <div class="row-line"/></td><td>🟩 /authenapi/PostManagementApi/savePost</td><td style="text-align: right;"> 731 ms</td></tr><tr><td style="position: relative"> <div class="row-line"/></td><td>🟩 /authenapi/PostManagementApi/findDataList</td><td style="text-align: right;"> 156 ms</td></tr></table></ul></li></ul></td></td>
+<td style="overflow-y: auto; max-width: 40rem; max-height: 10rem;"></td>
+<td style="padding:10px 0 10px 0px;">4936 ms</td></tbody>
+</table>
+<script>
+  function apiListContentAppend() {
+    var toggler = document.getElementsByClassName("caret");
+    var i;
+    for (i = 0; i < toggler.length; i++) {
+      toggler[i].addEventListener("click", function () {
+        this.parentElement.querySelector(".nested-api-group").classList.toggle("active");
+
+        this.classList.toggle("caret-down");
+      });
+    }
+  }
+
+  function addModalCloseEvent() {
+    document.querySelectorAll(".stack-trace-modal").forEach((elem) => {
+      let closeModalButton = elem.querySelector("span.close");
+      closeModalButton.onclick = function () {
+        elem.classList.remove("active");
+      };
+
+      elem.onclick = function (event) {
+        if (event.target == elem) {
+          elem.classList.remove("active");
+        }
+      };
+    });
+  }
+
+  apiListContentAppend();
+  addModalCloseEvent();
+</script>
+</body>
+</html>
