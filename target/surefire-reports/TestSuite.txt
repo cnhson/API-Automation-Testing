@@ -1,8 +1,8 @@
 -------------------------------------------------------------------------------
 Test set: TestSuite
 -------------------------------------------------------------------------------
-Tests run: 6, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 14.51 s <<< FAILURE! -- in TestSuite
-api.test.main.workers.IndependentTestWorker.positiveTest -- Time elapsed: 0.285 s <<< FAILURE!
+Tests run: 6, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 7.908 s <<< FAILURE! -- in TestSuite
+api.test.main.workers.IndependentTestWorker.positiveTest -- Time elapsed: 0.124 s <<< FAILURE!
 java.lang.Throwable: 
 The following asserts failed:
 	      Expected: 36 keys

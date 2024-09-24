@@ -18,6 +18,7 @@ import org.testng.asserts.SoftAssert;
 
 import com.google.common.html.HtmlEscapers;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -32,11 +33,6 @@ import io.restassured.response.Response;
 public class Main {
 
 	public static void main(String[] args) {
-		String fileName = "src/test/java/api/test/main/examples/testResponse4.txt"; // Replace with your file name
-		String stringRes = readFileToString(fileName);
-		String escapedString = StringEscapeUtils.escapeJava(stringRes);
-		System.out.println("\nBefore: " + StringEscapeUtils.unescapeJava(escapedString));
-		System.out.println("\nAfter:  " + escapedString);
 
 	}
 

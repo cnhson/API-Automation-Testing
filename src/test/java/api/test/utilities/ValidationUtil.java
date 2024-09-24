@@ -1,6 +1,5 @@
 package api.test.utilities;
 
-import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -8,11 +7,8 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.text.StringEscapeUtils;
 import org.testng.Assert;
-// import org.testng.Assert;
 import org.testng.asserts.SoftAssert;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -23,7 +19,6 @@ public class ValidationUtil {
 	private Response response;
 	private String requestUrl;
 	private SoftAssert softAssert = new SoftAssert();
-	private Gson gson = new Gson();
 	private final Pattern escapeHtmlPattern = Pattern.compile("u[a-zA-Z0-9]+;");
 
 	public ValidationUtil() {
@@ -78,7 +73,7 @@ public class ValidationUtil {
 		Assert.assertNotNull(this.response, "Response is null");
 	}
 
-	public JsonObject parseJsonStringToJson(String stringResponse) {
+	public JsonObject parseJsonString(String stringResponse) {
 		try {
 			Matcher escapeHtmlMatcher = escapeHtmlPattern.matcher(stringResponse);
 			if (escapeHtmlMatcher.find()) {
@@ -91,17 +86,6 @@ public class ValidationUtil {
 				JsonObject contentJson = JsonParser.parseString(contentString).getAsJsonObject();
 				parsedJson.add("content", contentJson);
 			}
-			// Check if any key's value is stringJson then parse to Json
-			// Matcher matcher = stringifyPattern.matcher(parsedJson.toString());
-			// if (matcher.find()) {
-			// Set<Map.Entry<String, JsonElement>> responseMap = parsedJson.entrySet();
-			// for (Map.Entry<String, JsonElement> entry : responseMap) {
-			// if (entry.getValue().toString().contains("\\\"")) {
-			// entry.setValue(JsonParser.parseString(entry.getValue().toString()));
-
-			// }
-			// }
-			// }
 			return parsedJson;
 		}
 		catch (Exception e) {

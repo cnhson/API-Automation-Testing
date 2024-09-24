@@ -53,7 +53,6 @@ public class IndependentValUtil extends ValidationUtil {
 	public void sendRequest() {
 		try {
 			Response res = null;
-			Integer attempts = 0;
 			AuthenUtil au = new AuthenUtil();
 			HTTPRequest request = new HTTPRequest(this.requestUrl, this.payload);
 			Instant start;
@@ -61,14 +60,7 @@ public class IndependentValUtil extends ValidationUtil {
 				start = Instant.now();
 				res = request.post();
 			} else {
-				while (attempts < 2) {
-					if (au.isLoggedIn()) {
-						break;
-					} else {
-						au.authorize("SYSTEM", this.username, this.password);
-						attempts++;
-					}
-				}
+				au.isLoggedIn(this.username, this.password);
 				start = Instant.now();
 				res = request.postWithSession();
 			}
@@ -76,8 +68,8 @@ public class IndependentValUtil extends ValidationUtil {
 			this.timeEslapsed = String.valueOf(Duration.between(start, finish).toMillis());
 			super.setReponse(res);
 			super.setRequestUrl(requestUrl);
-			this.jsonResponse = super.parseJsonStringToJson(res.then().extract().asString());
-			this.jsonExpectedResponse = super.parseJsonStringToJson(this.expectedResponse);
+			this.jsonResponse = super.parseJsonString(res.then().extract().asString());
+			this.jsonExpectedResponse = super.parseJsonString(this.expectedResponse);
 
 		}
 		catch (Exception e) {

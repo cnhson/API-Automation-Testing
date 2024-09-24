@@ -6,7 +6,6 @@ import org.apache.commons.lang3.function.TriConsumer;
 
 import api.test.entities.AccountEntity;
 import api.test.entities.ChainingEntity;
-import api.test.entities.FakeChainEntity;
 import api.test.enums.ModeEnum;
 import api.test.interfaces.DataFetchInterface;
 import api.test.utilities.ExcelFetchUtil;
@@ -90,17 +89,17 @@ public class ChainingFetchController {
 		return this.modeChosen.name();
 	}
 
-	public void loopFetchingDataTest(String apiSheetName, String accountSheetName,
+	public void loopFetchingDataTest(String apiSheetName,
 			TriConsumer<ChainingEntity, AccountEntity, Object[]> innerFunction) {
 		try {
 			//
 			DataFetchInterface apiIE = this.sheetNameFetching(apiSheetName);
-			DataFetchInterface accountIE = this.sheetNameFetching(accountSheetName);
+
 			//
-			accountIE.fetchingData(1);
-			String[] accountInfo = accountIE.getRowCellsData(1, "USERNAME", "PASSWORD");
-			AccountEntity ae = new AccountEntity(accountInfo[0], accountInfo[1]);
-			accountIE.fetchClose();
+			String username = pu.getPropAsString("USERNAME");
+			String password = pu.getPropAsString("PASSWORD");
+			AccountEntity ae = new AccountEntity(username, password);
+			//
 
 			Object[] groupInfo = new Object[2];
 			String groupDes = "";
@@ -116,11 +115,9 @@ public class ChainingFetchController {
 					apiIE.fetchingData(this.currentCellIndex);
 					String[] result = apiIE.getRowCellsData(this.currentCellIndex, "ID", "DESCRIPTION",
 							"PATH", "QUERY_PARAM", "LOGIN_REQUIRED", "VARIABLE", "VERIFY_VARIABLE");
-
 					if (result[0] == null || result[0].isEmpty()) {
 						ce = null;
 					} else {
-
 						if (!result[1].isEmpty() && groupDes != result[1]) {
 							groupDes = result[1];
 						}
@@ -130,7 +127,6 @@ public class ChainingFetchController {
 						String authenRequire = result[4];
 						String variable = result[5];
 						String verifyVariable = result[6];
-
 						if (!variable.isBlank() && !variable.isEmpty()) {
 							variableList = convertExcelVariableToList(variable);
 							isFinalStep = false;
@@ -138,25 +134,21 @@ public class ChainingFetchController {
 							verifyVarList = convertExcelVariableToList(verifyVariable);
 							isFinalStep = true;
 						}
-
 						ce = new ChainingEntity(id, reqUrl, isFinalStep, payload, authenRequire, variableList,
 								verifyVarList);
 					}
 					this.currentCellIndexIncrease();
-
 				}
 				groupInfo[0] = groupId;
 				groupInfo[1] = groupDes;
 				innerFunction.accept(ce, ae, groupInfo);
-
 				if (ce == null)
 					groupId++;
-
 			}
 
 		}
 		catch (Exception e) {
-			System.err.println("Error in ChainingFetchController (index:" + this.getCurrentCellIndex() + "): "
+			System.err.println("[ChainingFetchController] error (index:" + this.getCurrentCellIndex() + "): "
 					+ e.getMessage());
 		}
 	}

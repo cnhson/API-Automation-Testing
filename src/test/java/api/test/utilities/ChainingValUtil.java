@@ -5,13 +5,7 @@ import java.time.Instant;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.BiConsumer;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.apache.commons.text.StringEscapeUtils;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -34,7 +28,6 @@ public class ChainingValUtil extends ValidationUtil {
 	private HashSet<String> varList = new HashSet<String>(); // Temporary variable list ( for each API, new variable
 																// list will be imported )
 	private String apiTimeEslapsed;
-	private Pattern slotCheckPattern = Pattern.compile(".*\\$\\{.+\\}$");
 
 	public ChainingValUtil() {
 	}
@@ -61,7 +54,6 @@ public class ChainingValUtil extends ValidationUtil {
 	public void sendRequest() {
 		try {
 			Response res = null;
-			Integer attempts = 0;
 			AuthenUtil au = new AuthenUtil();
 			Instant start;
 			HTTPRequest request = new HTTPRequest(this.requestUrl, this.jsonPayLoad.toString());
@@ -69,14 +61,7 @@ public class ChainingValUtil extends ValidationUtil {
 				start = Instant.now();
 				res = request.post();
 			} else {
-				while (attempts < 2) {
-					if (au.isLoggedIn()) {
-						break;
-					} else {
-						au.authorize("SYSTEM", this.username, this.password);
-						attempts++;
-					}
-				}
+				au.isLoggedIn(this.username, this.password);
 				start = Instant.now();
 				res = request.postWithSession();
 			}
@@ -85,7 +70,7 @@ public class ChainingValUtil extends ValidationUtil {
 			super.setRequestUrl(requestUrl);
 			super.setReponse(res);
 			super.expectReponseNotNull();
-			this.jsonResponse = super.parseJsonStringToJson(res.then().extract().asString());
+			this.jsonResponse = super.parseJsonString(res.then().extract().asString());
 
 		}
 		catch (Exception e) {
@@ -99,12 +84,13 @@ public class ChainingValUtil extends ValidationUtil {
 	}
 
 	// Checking variable slot in 1 single String line
-	// For example: aa: {key}
+	// For example: aa: ${key}
 	public Boolean isVariableSlot(String value) {
 		try {
-			// Example: {key}, {name}, {id}
-			Matcher matcher = slotCheckPattern.matcher(value);
-			return matcher.find();
+			if (value.startsWith("${"))
+				return true;
+			else
+				return false;
 		}
 		catch (Exception e) {
 			System.err.println(
@@ -116,14 +102,15 @@ public class ChainingValUtil extends ValidationUtil {
 	/**
 	 * Checking if there is variable slot in String paragraph. Formula {@code{key}}
 	 * <p>
-	 * For example: {"aaa: {data[0].name}, bbb: "bbb", ccc: "1"}
+	 * For example: {"aaa: ${data[0].name}, bbb: "bbb", ccc: "1"}
 	 * </p>
 	 **/
 	public Boolean isVariableSlotInString(String longString) {
 		try {
-			// Example: aa {key} aa, cc {name} cc, bb {id} bb
-			Matcher matcher = slotCheckPattern.matcher(longString);
-			return matcher.find();
+			if (longString.contains("${"))
+				return true;
+			else
+				return false;
 		}
 		catch (Exception e) {
 			System.err.println(
@@ -219,9 +206,8 @@ public class ChainingValUtil extends ValidationUtil {
 	// Insert variable value to jsonPayLoad's slot - ${value}
 	public void insertVariableSlotValue(JsonObject imporJsonObject) {
 		try {
-			// System.out.println("imporJsonObject: " + imporJsonObject);
-			// if (!imporJsonObject.isEmpty())
-			iterateJsonInsertValue(this.jsonPayLoad, imporJsonObject);
+			if (!imporJsonObject.isEmpty())
+				iterateJsonInsertValue(this.jsonPayLoad, imporJsonObject);
 		}
 		catch (Exception e) {
 			System.err.println("Insert variable slot value failed: " + e.getMessage());
@@ -230,6 +216,7 @@ public class ChainingValUtil extends ValidationUtil {
 
 	// Check if there is any variable slot in jsonPayLoad
 	public Boolean checkIfVariableSlotInParam() {
+
 		try {
 			if (isVariableSlotInString(this.getInsertedjsonPayLoadAsString()))
 				return true;

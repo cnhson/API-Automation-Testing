@@ -1,12 +1,11 @@
 api\test\endpoints\Routes.class
-api\test\main\factories\FakeIndepdentTestFactory.class
 api\test\enums\ModeEnum.class
 api\test\utilities\AuthenUtil.class
 api\test\controllers\NoValidateFetchController$1.class
 api\test\utilities\LoggerUtil.class
 api\test\services\GoogleServices.class
+api\test\main\workers\AuthenciationWorker.class
 api\test\main\workers\IndependentTestWorker.class
-api\test\main\workers\FakeIndependentTestWorker.class
 api\test\main\workers\ChainingTestWorker.class
 api\test\main\factories\ChainingTestFactory.class
 api\test\utilities\TimeEslapseUtil.class
@@ -17,7 +16,6 @@ api\test\lib\custom\testNG\CustomReporter.class
 api\test\entities\SuiteInfoDBEntity.class
 api\test\utilities\TestOrderUtil.class
 api\test\entities\ChainingEntity.class
-api\test\main\factories\FakeIndepdentTestFactory2.class
 api\test\entities\SuiteDataDBEntity.class
 api\test\utilities\ExcelFetchUtil.class
 api\test\utilities\GoogleSheetsFetchUtil.class

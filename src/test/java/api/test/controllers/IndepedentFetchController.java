@@ -86,21 +86,19 @@ public class IndepedentFetchController {
 		return this.modeChosen.name();
 	}
 
-	public void loopFetchingDataTest(String apiSheetName, String accountSheetName,
+	public void loopFetchingDataTest(String apiSheetName,
 			TriConsumer<IndependentEntity, AccountEntity, Object[]> innerFunction) {
 		try {
 
 			DataFetchInterface apiIE = this.sheetNameFetching(apiSheetName);
-			DataFetchInterface accountIE = this.sheetNameFetching(accountSheetName);
 			//
-			accountIE.fetchingData(1);
-			String[] accountInfo = accountIE.getRowCellsData(1, "USERNAME", "PASSWORD");
-			accountIE.fetchClose();
+			String username = pu.getPropAsString("USERNAME");
+			String password = pu.getPropAsString("PASSWORD");
+			AccountEntity ae = new AccountEntity(username, password);
 
 			Object[] testInfo = new Object[2];
 			String testDes = "";
 			Integer testId;
-			AccountEntity ae = null;
 			IndependentEntity ie = null;
 			while (isRunning) {
 
@@ -120,7 +118,6 @@ public class IndepedentFetchController {
 					String authenRequire = result[4];
 
 					testId = Integer.valueOf(id);
-					ae = new AccountEntity(accountInfo[0], accountInfo[1]);
 					ie = new IndependentEntity(id, reqUrl, payload, expectedRes, "", authenRequire);
 
 					this.currentCellIndexIncrease();

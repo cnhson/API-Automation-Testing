@@ -29,6 +29,7 @@
         <classes>
             <!-- <class name="api.test.main.factories.FakeIndepdentTestFactory" /> -->
             <!-- <class name="api.test.main.factories.FakeIndepdentTestFactory3" /> -->
+            <class name="api.test.main.workers.AuthenciationWorker" />
             <class name="api.test.main.factories.IndependentTestFactory" />
             <class name="api.test.main.factories.ChainingTestFactory" />
         </classes>
