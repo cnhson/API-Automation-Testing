@@ -243,30 +243,18 @@ public class ChainingValUtil extends ValidationUtil {
 			if (!isFinalStep) {
 
 				super.expectStatusCode(200);
-				long startTime1 = System.nanoTime();
 
 				this.expectedValueEqualsString("result", "success");
-				System.out.println("\nReq: " + this.requestUrl + ", c-expectResult: "
-						+ (System.nanoTime() - startTime1));
-
 				// Set variableList from Excel to ChainingUtil
-				long startTime2 = System.nanoTime();
 
 				this.setVariableList(variableList);
-				System.out.println(
-						"\nReq: " + this.requestUrl + ", c-setVarList: " + (System.nanoTime() - startTime2));
-				long startTime3 = System.nanoTime();
 
 				// Get key, value from res or jsonPayLoad according to variableList above
 				this.getVariableValue();
-				System.out.println(
-						"\nReq: " + this.requestUrl + ", c-getVarValue: " + (System.nanoTime() - startTime3));
-				long startTime4 = System.nanoTime();
 
 				// Store variable and value list for next step
 				this.exportVariableAndValue(importJsonVariableAndValue);
-				System.out.println(
-						"\nReq: " + this.requestUrl + ", c-exportVar: " + (System.nanoTime() - startTime4));
+
 			} else {
 				// System.out.println("Final step, verifying " + verifyVarList);
 				this.verifyReponse(verifyVarList, importJsonVariableAndValue);

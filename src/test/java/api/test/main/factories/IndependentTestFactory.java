@@ -11,11 +11,11 @@ public class IndependentTestFactory {
 
 	@Factory
 	public Object[] createInstance() {
-
-		IndepedentFetchController ifc = new IndepedentFetchController();
 		Stream.Builder<IndependentTestWorker> streamBuilder = Stream.builder();
+		IndepedentFetchController ifc = new IndepedentFetchController();
+		ifc.setFetchSheetName("VICK_API_INDEPENDENT");
 		String fetchMode = ifc.getFetchMode();
-		ifc.loopFetchingDataTest("VICK_API_INDEPENDENT", (apiEntity, accountEntity, testInfo) -> {
+		ifc.loopFetchingDataTest((apiEntity, accountEntity, testInfo) -> {
 			streamBuilder.add(new IndependentTestWorker(apiEntity, accountEntity, testInfo, fetchMode));
 		});
 		return streamBuilder.build().toArray();

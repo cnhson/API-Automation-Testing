@@ -1,8 +1,5 @@
 package api.test.main.workers;
 
-import java.time.Duration;
-import java.time.Instant;
-
 import org.testng.ITestContext;
 import org.testng.ITestResult;
 import org.testng.Reporter;

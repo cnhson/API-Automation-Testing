@@ -28,7 +28,6 @@ D:\GithubProjects\API-Automation-Testing\src\test\java\api\test\utilities\ExcelF
 D:\GithubProjects\API-Automation-Testing\src\test\java\api\test\utilities\AuthenUtil.java
 D:\GithubProjects\API-Automation-Testing\src\test\java\api\test\utilities\GoogleSheetsFetchUtil.java
 D:\GithubProjects\API-Automation-Testing\src\test\java\api\test\utilities\SessionCookieUtil.java
-D:\GithubProjects\API-Automation-Testing\src\test\java\api\test\lib\custom\testNG\CustomMethodInterceptor.java
 D:\GithubProjects\API-Automation-Testing\src\test\java\api\test\main\workers\IndependentTestWorker.java
 D:\GithubProjects\API-Automation-Testing\src\test\java\api\test\controllers\IndepedentFetchController.java
 D:\GithubProjects\API-Automation-Testing\src\test\java\api\test\entities\AccountEntity.java

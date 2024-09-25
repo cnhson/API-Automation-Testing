@@ -34,22 +34,21 @@ public class NoValidateFetchController {
 						System.out.println("---Download completed---");
 					});
 					System.out.println(
-							"Overwrite to [ONLINE] mode since can't get the lastest modified timestamp from local file");
+							"Switch to (ONLINE) mode since can't get the lastest modified timestamp from local file");
 				} else if (isModified == true) {
 					gdfu.downloadSpreadSheetAsync().thenRun(() -> {
 						System.out.println("---Download completed---");
 					});
-					System.out.println("Overwrite to [ONLINE] mode since new modified timestampe found");
+					System.out.println("Switch to (ONLINE) mode since new modified timestamp found");
 				} else {
-					System.out.println(
-							"Overwrite to [OFFLINE] mode because it haven't been modified since last time");
+					System.out.println("Switch to (OFFLINE) mode because it haven't been modified");
 					this.modeChosen = ModeEnum.OFFLINE;
 				}
 			}
 		}
 		catch (Exception e) {
 			System.err.println("Error while adjusting mode: " + e.getMessage());
-			System.err.println("Switch to [Online] mode (default)");
+			System.err.println("Switch to (ONLINE) mode");
 			this.modeChosen = ModeEnum.ONLINE;
 		}
 	}

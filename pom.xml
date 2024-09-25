@@ -199,9 +199,6 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.3.1</version>
                 <configuration>
-                    <additionalClasspathElements>
-                        <additionalClasspathElement>${basedir}/target/test-classes</additionalClasspathElement>
-                    </additionalClasspathElements>
                     <argLine>
                         ${java.17.options}
                         -Djdk.net.URLClassPath.disableClassPathURLCheck=true

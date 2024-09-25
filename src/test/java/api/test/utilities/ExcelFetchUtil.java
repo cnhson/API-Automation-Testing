@@ -36,7 +36,6 @@ public class ExcelFetchUtil implements DataFetchInterface {
 			File file = new File(PUBLIC_RESOURCE_PATH + fileName + ".xlsx");
 			this.fis = new FileInputStream(file.getPath());
 			this.workbook = new XSSFWorkbook(fis);
-
 			this.sheet = workbook.getSheet(sheetName);
 			setConfig();
 
@@ -54,9 +53,7 @@ public class ExcelFetchUtil implements DataFetchInterface {
 	@Override
 	public void setConfig() {
 		try {
-			String columnAndRowRegex = "^.*[ ]\\d+,\\d.*$";
-			Pattern columnAndRowPattern = Pattern.compile(columnAndRowRegex);
-			Matcher columnAndRowMatcher;
+			String columnAndRowRegex = "Rows,Columns";
 			Integer columnIndex = this.contentIndex - 2;
 			// Integer columnAmount =
 			// this.sheet.getRow(columnIndex).getPhysicalNumberOfCells();
@@ -65,8 +62,7 @@ public class ExcelFetchUtil implements DataFetchInterface {
 				for (Integer colIndex = 0; colIndex < 15; colIndex++) {
 					Cell cell = this.sheet.getRow(rowIndex).getCell(colIndex);
 					if (cell != null) {
-						columnAndRowMatcher = columnAndRowPattern.matcher(cell.getStringCellValue());
-						if (columnAndRowMatcher.find()) {
+						if (cell.getStringCellValue().contains(columnAndRowRegex)) {
 							String rowAndColumn = cell.getStringCellValue().trim().split(" ")[1];
 							this.maxColumnIndex = Integer.parseInt(rowAndColumn.split(",")[1]);
 							this.maxRowIndex = Integer.parseInt(rowAndColumn.split(",")[0]);
@@ -88,40 +84,42 @@ public class ExcelFetchUtil implements DataFetchInterface {
 
 	@Override
 	public String[] getRowCellsData(Integer rowIndex, String... colNames) {
+		Integer colIndex = 0;
 		try {
-
+			dataFormatter.setUseCachedValuesForFormulaCells(true);
 			List<String> result = new ArrayList<>();
 			for (String colName : colNames) {
-				Integer colIndex = this.columnList.indexOf(colName);
+				colIndex = this.columnList.indexOf(colName);
 				if (colIndex == -1) {
 					throw new Exception("Can not get index of column: " + colName);
 				}
 				if (!isCellNull(rowIndex + this.contentIndex - 2, colIndex)) {
 					Cell cell = this.sheet.getRow(rowIndex + this.contentIndex - 2).getCell(colIndex);
-					if (cell.getCellType() == CellType.NUMERIC)
+
+					switch (cell.getCellType()) {
+					case NUMERIC:
+						result.add(String.valueOf((int) cell.getNumericCellValue()));
+						break;
+					case FORMULA:
 						result.add(dataFormatter.formatCellValue(cell));
-					else
+						break;
+					case STRING:
 						result.add(cell.getRichStringCellValue().getString());
+						break;
+					default:
+						result.add("");
+						break;
+					}
+
 				} else {
 					result.add("");
 				}
-				// try {
-				// Cell cell = this.sheet.getRow(rowIndex + this.contentIndex - 2).getCell(colIndex);
-				// if (cell.getCellType() == CellType.NUMERIC)
-				// result.add(dataFormatter.formatCellValue(cell));+
-				// else
-				// result.add(cell.getRichStringCellValue().getString());
-
-				// }
-				// catch (Exception e) {
-				// // If cell content is null while getRow getCell, add "" instead
-				// result.add("");
-				// }
 			}
 			return result.toArray(new String[0]);
 		}
 		catch (Exception e) {
-			System.err.println("\n[ExcelFetchUtil] Error while getting cell value: " + e.getMessage());
+			System.err.println("\n[ExcelFetchUtil] Error while getting cell [" + rowIndex + "," + colIndex
+					+ "]: " + e.getMessage());
 			return null;
 
 		}

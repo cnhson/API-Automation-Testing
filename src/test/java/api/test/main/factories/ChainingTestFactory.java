@@ -13,12 +13,14 @@ import api.test.main.workers.ChainingTestWorker;
 public class ChainingTestFactory {
 	@Factory
 	public Object[] createInstance() {
-		ChainingFetchController cfc = new ChainingFetchController();
-		String fetchMode = cfc.getFetchMode();
 		List<List<ChainingEntity>> fakeEntityListContainer = new ArrayList<>(1);
 		fakeEntityListContainer.add(new ArrayList<>());
 		Stream.Builder<ChainingTestWorker> streamBuilder = Stream.builder();
-		cfc.loopFetchingDataTest("VICK_API_CHAINING", (apiEntity, accountEntity, group) -> {
+
+		ChainingFetchController cfc = new ChainingFetchController();
+		cfc.setFetchSheetName("VICK_API_CHAINING");
+		String fetchMode = cfc.getFetchMode();
+		cfc.loopFetchingDataTest((apiEntity, accountEntity, group) -> {
 			if (apiEntity == null) {
 				streamBuilder.add(new ChainingTestWorker(fakeEntityListContainer.get(0), accountEntity, group,
 						fetchMode));

@@ -23,9 +23,15 @@ public class ChainingFetchController {
 	private HashSet<String> variableList = new HashSet<String>();
 	private HashSet<String> verifyVarList = new HashSet<String>();
 	private Boolean isFinalStep = false;
+	private String sheetName;
 
 	public ChainingFetchController() {
+
+	}
+
+	public void setFetchSheetName(String sheetName) {
 		try {
+			this.sheetName = sheetName;
 			Boolean switchMode = Boolean.parseBoolean(pu.getPropAsString("AUTO_SWITCH_MODE"));
 			this.modeChosen = ModeEnum.ONLINE;
 
@@ -33,39 +39,39 @@ public class ChainingFetchController {
 				Boolean isModified = gdfu.checkIfRecentlyModified();
 				if (isModified == null) {
 					gdfu.downloadSpreadSheetAsync().thenRun(() -> {
-						System.out.println("---Download completed---");
+						System.out.println("---Download completed (" + sheetName + ")---");
 					});
 					System.out.println(
-							"Overwrite to [ONLINE] mode since can't get the lastest modified timestamp from local file");
+							"Switch to (ONLINE) mode since can't get the lastest modified timestamp from local file");
 				} else if (isModified == true) {
 					gdfu.downloadSpreadSheetAsync().thenRun(() -> {
-						System.out.println("---Download completed---");
+						System.out.println("---Download completed (" + sheetName + ")---");
 					});
-					System.out.println("Overwrite to [ONLINE] mode since new modified timestampe found");
+					System.out.println("Switch to (ONLINE) mode since new modified timestamp found");
 				} else {
-					System.out.println(
-							"Overwrite to [OFFLINE] mode because it haven't been modified since last time");
+					System.out.println("Switch to (OFFLINE) mode because it haven't been modified");
 					this.modeChosen = ModeEnum.OFFLINE;
 				}
 			} else
-				System.out.println("Default [ONLINE] mode");
+				System.out.println("Default (ONLINE) mode");
 
 		}
 		catch (Exception e) {
 			System.err.println("Error while adjusting mode: " + e.getMessage());
-			System.err.println("Switch to [Online] mode (default)");
+			System.err.println("Switch to (ONLINE) mode");
 			this.modeChosen = ModeEnum.ONLINE;
 		}
 	}
 
-	public DataFetchInterface sheetNameFetching(String sheetName) {
+	private DataFetchInterface sheetNameFetching() {
+
 		switch (this.modeChosen) {
 		case OFFLINE:
-			return new ExcelFetchUtil(sheetName);
+			return new ExcelFetchUtil(this.sheetName);
 		case ONLINE:
-			return new GoogleSheetsFetchUtil(sheetName);
+			return new GoogleSheetsFetchUtil(this.sheetName);
 		default:
-			return new ExcelFetchUtil(sheetName);
+			return new ExcelFetchUtil(this.sheetName);
 		}
 	}
 
@@ -89,11 +95,10 @@ public class ChainingFetchController {
 		return this.modeChosen.name();
 	}
 
-	public void loopFetchingDataTest(String apiSheetName,
-			TriConsumer<ChainingEntity, AccountEntity, Object[]> innerFunction) {
+	public void loopFetchingDataTest(TriConsumer<ChainingEntity, AccountEntity, Object[]> innerFunction) {
 		try {
 			//
-			DataFetchInterface apiIE = this.sheetNameFetching(apiSheetName);
+			DataFetchInterface apiIE = this.sheetNameFetching();
 
 			//
 			String username = pu.getPropAsString("USERNAME");

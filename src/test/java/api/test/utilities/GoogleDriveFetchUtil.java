@@ -5,6 +5,9 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.concurrent.CompletableFuture;
 
 import api.test.services.GoogleServices;
@@ -70,8 +73,13 @@ public class GoogleDriveFetchUtil {
 
 	public Boolean checkIfRecentlyModified() {
 		try {
-			System.out.println("Lastest saved modified time: " + this.savedModifiedTime);
-			System.out.println("Lastest online  modified time: " + this.onlineModifiedTime);
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH.mm.ss");
+			String savedTime = dateFormat
+					.format(new Date(new Timestamp(this.savedModifiedTime * 1000).getTime()));
+			String onlineTime = dateFormat
+					.format(new Date(new Timestamp(this.onlineModifiedTime * 1000).getTime()));
+			System.out.println("\nLastest saved modified time:  " + savedTime);
+			System.out.println("Lastest online modified time: " + onlineTime + "\n");
 			if (this.savedModifiedTime < this.onlineModifiedTime) {
 				return true;
 			} else

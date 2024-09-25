@@ -23,10 +23,10 @@ public class DatabaseUtil {
 	private Server server;
 	private Connection connection;
 	private String databaseName = pu.getPropAsString("DATABASE_NAME");
-	private String embeddedPath = pu.getPropAsString("EMBEDDED_PATH");
+	// private String embeddedPath = pu.getPropAsString("EMBEDDED_PATH");
 	private String serverPath = pu.getPropAsString("SERVER_PATH");
 	private String currentBranch = "UAT";
-	private String jdbc1 = embeddedPath + databaseName;
+	// private String jdbc1 = embeddedPath + databaseName;
 	private String jdbc2 = serverPath + databaseName;
 	private String username = "sa";
 	private String password = "1234";
@@ -196,14 +196,16 @@ public class DatabaseUtil {
 			}
 	}
 
-	public List<SuiteDataDBEntity> selectRecords(String inputSuiteName, String inputDateTime) {
+	public List<SuiteDataDBEntity> getRecords(String inputSuiteName, String inputDateTime) {
 		try {
-			String query = " SELECT * FROM " + this.currentBranch + " where EXECUTEDATE = '" + inputDateTime
-					+ "' and SUITENAME = '" + inputSuiteName + "'";
+			String suiteInfoQuery = " SELECT * FROM " + this.currentBranch + " where STARTDATE = '"
+					+ inputDateTime + "' and SUITENAME = '" + inputSuiteName + "'";
+
+			// String suiteDataQuery = " SELECT 8 FROM " + this.currentBranch + " where SUITEID = " +
 
 			List<SuiteDataDBEntity> entityList = new ArrayList<SuiteDataDBEntity>();
 
-			PreparedStatement pstmt = connection.prepareStatement(query);
+			PreparedStatement pstmt = connection.prepareStatement(suiteInfoQuery);
 			ResultSet resultSet = pstmt.executeQuery();
 
 			while (resultSet.next()) {

@@ -21,50 +21,10 @@ import io.restassured.response.Response;
 
 public class Main {
 
-    private static Integer timeOut = 10000;
-    private static Map<String, String> headerConfig = new HashMap<>();
-    static private File sessionCookieFile = new File("src/test/resources/private/sessionCookie.txt");
+	public static void main(String[] args) {
 
-    public static void setHeaderConfig() {
-        headerConfig.put("Origin", "https://stalkuat.hanzo.finance");
-        headerConfig.put("Accept-language", "en-US,en;q=0.5");
-        headerConfig.put("Content-type", "application/json");
-        headerConfig.put("Cookie", getFromFile());
-    }
+		System.out.println("Hello thang ngu!");
 
-    public static Response postWithSession(String path, String payload) {
-        return given()
-                .config(RestAssuredConfig.config()
-                        .httpClient(HttpClientConfig.httpClientConfig()
-                                .setParam("http.socket.timeout", timeOut)
-                                .setParam("http.connection.timeout", timeOut)))
-                .headers(headerConfig)
-                .accept(ContentType.ANY)
-                .body(payload)
-                .when()
-                .post(path).peek();
-    }
-
-    public static String getFromFile() {
-        try {
-            String data = FileUtils.readFileToString(sessionCookieFile, "UTF-8").trim();
-            return data;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public static void main(String[] args) {
-        // Character CHAR = (char) 65;
-        // System.out.println("\nHere: " + CHAR);
-        setHeaderConfig();
-        System.out.println("\nRunning\n");
-        Response res = postWithSession("https://stalkuat.hanzo.finance/authenapi/userapi/getLoggedInfo", "");
-        res.then().extract().asString();
-        System.out.println("\n");
-        // Response res2 = postLogin();
-        // res2.then().log().body().log();
-    }
+	}
 
 }

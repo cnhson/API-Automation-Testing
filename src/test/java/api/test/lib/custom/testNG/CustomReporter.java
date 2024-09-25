@@ -333,10 +333,11 @@ public class CustomReporter extends TestListenerAdapter implements IReporter {
 			Map<String, List<ITestResult>> resultsByClass) {
 		try (PrintWriter writer = new PrintWriter(
 				Utils.openWriter(outputDirectory, getOutputFile(testContext)))) {
-			String htmlFilePath = "src/test/java/api/test/lib/custom/testNG";
+			String htmlFilePath = "src/test/java/api/test/lib/custom/testNG/html/";
+
 			// Read headContent.html as string
-			FileInputStream headContentfis = new FileInputStream(htmlFilePath + "/headContent.html");
-			FileInputStream bodyContentfis = new FileInputStream(htmlFilePath + "/bodyContent.html");
+			FileInputStream headContentfis = new FileInputStream(htmlFilePath + "headContent.html");
+			FileInputStream bodyContentfis = new FileInputStream(htmlFilePath + "bodyContent.html");
 			String headHtmlContent = IOUtils.toString(headContentfis, StandardCharsets.UTF_8);
 			String bodyHtmlContent = IOUtils.toString(bodyContentfis, StandardCharsets.UTF_8);
 			//

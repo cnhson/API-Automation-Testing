@@ -24,11 +24,11 @@ api\test\controllers\ChainingFetchController.class
 api\test\utilities\ChainingValUtil.class
 api\test\utilities\DatabaseUtil.class
 api\test\utilities\ValidationUtil.class
-api\test\lib\custom\testNG\CustomMethodInterceptor.class
 api\test\utilities\HashUtil.class
 api\test\controllers\IndepedentFetchController$1.class
 api\test\controllers\ChainingFetchController$1.class
 api\test\endpoints\HTTPRequest.class
+api\test\utilities\ExcelFetchUtil$1.class
 api\test\lib\custom\testNG\CustomReporter$IndexComparator.class
 api\test\utilities\GoogleDriveFetchUtil.class
 api\test\interfaces\DataFetchInterface.class
